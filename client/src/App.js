@@ -10,6 +10,7 @@ import {Provider} from 'react-redux';
 import setAuthToken from './utils/setAuthToken';
 import Dashboard from './component/Dashboard/dashboard';
 import {loadUser} from './action/auth';
+import {getCart} from './action/cart';
 import PrivateRoute from './component/routing/PrivateRoute';
 import IndProduct from './component/Products/IndProduct';
 
@@ -17,6 +18,7 @@ import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 import CartProducts from './component/Products/CartProducts';
 import OrderProducts from './component/Products/OrderProducts';
 import PlaceOrder from './component/Products/PlaceOrder';
+import Profile from './component/Profile/Profile';
 
 
 const App =() =>{
@@ -26,6 +28,11 @@ const App =() =>{
       setAuthToken(localStorage.token);
     }
     store.dispatch(loadUser());
+
+    // Load cart data if user is authenticated
+    if (localStorage.token) {
+      store.dispatch(getCart());
+    }
 
     // log user out from all tabs if they log out in one tab
     window.addEventListener('storage', () => {
@@ -46,6 +53,7 @@ const App =() =>{
                 <PrivateRoute exact path="/dashboard" component={Dashboard}/>
                 <PrivateRoute exact path="/cart" component={CartProducts}/>
                 <PrivateRoute exact path="/order" component={OrderProducts}/>
+                <PrivateRoute exact path="/profile" component={Profile}/>
                 <PrivateRoute exact path="/placeorder/:data" component={PlaceOrder}/>
             </Switch>
         <Footer></Footer>

@@ -9,12 +9,13 @@ const cart = (state=initialState,action) =>{
         case "CART_ADDING_FAIL":
         case "CART_GETTING_FAIL":
         case "CART_REMOVE_FAIL":
+        case "LOGOUT":
             return [];
         case "CART_REMOVE_SUCCESS":
             return state.filter(cart => cart._id !== payload);
         default:
             return state;
-        
+
     }
 }
 
