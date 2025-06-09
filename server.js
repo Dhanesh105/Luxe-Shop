@@ -1,11 +1,24 @@
 const express = require('express');
-const app = express();
-const connectDB = require('./config/db');
+const dotenv = require('dotenv');
+const cors = require('cors');
 const path = require('path');
 
+// Load environment variables
+dotenv.config();
 
+const app = express();
+const connectDB = require('./config/db');
+
+
+// Connect to database
 connectDB();
-app.use(express.json())
+
+// Middleware
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  credentials: true
+}));
+app.use(express.json());
 
 app.use('/api/user',require('./routes/api/user'));
 app.use('/api/auth',require('./routes/api/auth'));
