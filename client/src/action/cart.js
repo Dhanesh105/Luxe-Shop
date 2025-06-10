@@ -22,9 +22,12 @@ export const addToCart = formData => async dispatch =>{
         dispatch(setAlert('Item Added to Cart', 'success'));
     }
     catch(err){
-        const errors = err.response.data.errors;
+        console.error('Add to cart error:', err);
+        const errors = err.response && err.response.data && err.response.data.errors;
         if(errors){
             errors.forEach(error => dispatch(setAlert(error.msg,'danger')))
+        } else {
+            dispatch(setAlert('Failed to add item to cart. Please try again.', 'danger'));
         }
         dispatch({
             type:"CART_ADDING_FAIL"
@@ -48,9 +51,12 @@ export const getCart = () => async dispatch =>{
         console.log("getcart",res.data)
     }
     catch(err){
-        const errors = err.response.data.errors;
+        console.error('Get cart error:', err);
+        const errors = err.response && err.response.data && err.response.data.errors;
         if(errors){
             errors.forEach(error => dispatch(setAlert(error.msg,'danger')))
+        } else {
+            dispatch(setAlert('Failed to load cart. Please refresh the page.', 'danger'));
         }
         dispatch({
             type:"CART_GETTING_FAIL"

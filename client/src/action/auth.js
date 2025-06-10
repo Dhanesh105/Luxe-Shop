@@ -44,9 +44,12 @@ export const register = formData => async dispatch =>{
         dispatch(getOrder());
     }
     catch(err){
-        const errors = err.response.data.errors;
+        console.error('Register error:', err);
+        const errors = err.response && err.response.data && err.response.data.errors;
         if(errors){
             errors.forEach(error => dispatch(setAlert(error.msg,'danger')))
+        } else {
+            dispatch(setAlert('Registration failed. Please try again.', 'danger'));
         }
         dispatch({
             type:"REGISTER_FAIL"
@@ -77,14 +80,17 @@ export const login = formData => async dispatch =>{
         dispatch(getOrder());
     }
     catch(err){
-        const errors = err.response.data.errors;
+        console.error('Login error:', err);
+        const errors = err.response && err.response.data && err.response.data.errors;
         if(errors){
             errors.forEach(error => dispatch(setAlert(error.msg,'danger')))
+        } else {
+            dispatch(setAlert('Login failed. Please check your credentials.', 'danger'));
         }
         dispatch({
             type:"LOGIN_FAIL"
         })
-    
+
     }
     
 }

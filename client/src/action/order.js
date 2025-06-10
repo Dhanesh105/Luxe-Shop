@@ -25,9 +25,12 @@ export const addToOrder = formData => async dispatch =>{
         dispatch(setAlert('Order Placed Successfully !!', 'success'));
     }
     catch(err){
-        const errors = err.response.data.errors;
+        console.error('Add to order error:', err);
+        const errors = err.response && err.response.data && err.response.data.errors;
         if(errors){
             errors.forEach(error => dispatch(setAlert(error.msg,'danger')))
+        } else {
+            dispatch(setAlert('Failed to place order. Please try again.', 'danger'));
         }
         dispatch({
             type:"ORDER_ADDING_FAIL"
@@ -51,9 +54,12 @@ export const getOrder = () => async dispatch =>{
         console.log("getorder",res.data)
     }
     catch(err){
-        const errors = err.response.data.errors;
+        console.error('Get order error:', err);
+        const errors = err.response && err.response.data && err.response.data.errors;
         if(errors){
             errors.forEach(error => dispatch(setAlert(error.msg,'danger')))
+        } else {
+            dispatch(setAlert('Failed to load orders. Please refresh the page.', 'danger'));
         }
         dispatch({
             type:"ORDER_GETTING_FAIL"
