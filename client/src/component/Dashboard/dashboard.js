@@ -10,6 +10,7 @@ const Dashboard = ({ user }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [navbarVisible, setNavbarVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
     useEffect(() => {
         // Check if user came from category selection on home page
@@ -71,6 +72,24 @@ const Dashboard = ({ user }) => {
         setViewMode(viewMode === 'grid' ? 'list' : 'grid');
     };
 
+    const toggleMobileFilters = () => {
+        setIsMobileFiltersOpen(!isMobileFiltersOpen);
+    };
+
+    // Prevent body scroll when mobile filter is open
+    useEffect(() => {
+        if (isMobileFiltersOpen) {
+            document.body.classList.add('mobile-filter-open');
+        } else {
+            document.body.classList.remove('mobile-filter-open');
+        }
+
+        // Cleanup on unmount
+        return () => {
+            document.body.classList.remove('mobile-filter-open');
+        };
+    }, [isMobileFiltersOpen]);
+
     if (isLoading) {
         return (
             <div className="dashboard-loading">
@@ -98,8 +117,8 @@ const Dashboard = ({ user }) => {
                 </div>
             </section>
 
-            {/* Dashboard Controls */}
-            <section className="dashboard-controls">
+            {/* Desktop Dashboard Controls */}
+            <section className="dashboard-controls desktop-controls">
                 <div className="container">
                     <div className="controls-wrapper">
                         {/* Search Bar */}
@@ -166,6 +185,119 @@ const Dashboard = ({ user }) => {
                     </div>
                 </div>
             </section>
+
+            {/* Mobile Floating Burger Menu */}
+            <div className="mobile-filter-burger">
+                <button
+                    className="burger-btn"
+                    onClick={toggleMobileFilters}
+                    aria-label="Toggle Filters"
+                >
+                    <i className="fas fa-sliders-h"></i>
+                </button>
+            </div>
+
+            {/* Mobile Filter Overlay */}
+            <div
+                className={`mobile-filter-overlay ${isMobileFiltersOpen ? 'active' : ''}`}
+                onClick={toggleMobileFilters}
+            >
+                <div
+                    className="mobile-filter-content"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="mobile-filter-header">
+                        <h3>Filters & Search</h3>
+                        <button
+                            className="close-btn"
+                            onClick={toggleMobileFilters}
+                            aria-label="Close Filters"
+                        >
+                            <i className="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div className="mobile-filter-body">
+                        {/* Mobile Search */}
+                        <div className="mobile-search-section">
+                            <div className="search-wrapper">
+                                <i className="fas fa-search search-icon"></i>
+                                <input
+                                    type="text"
+                                    placeholder="Search premium products..."
+                                    value={searchTerm}
+                                    onChange={handleSearch}
+                                    className="search-input"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Mobile Filters */}
+                        <div className="mobile-filter-groups">
+                            <div className="mobile-filter-group">
+                                <label className="filter-label">Category</label>
+                                <select
+                                    value={selectedCategory}
+                                    onChange={(e) => handleCategoryChange(e.target.value)}
+                                    className="filter-select"
+                                >
+                                    <option value="all">All Products</option>
+                                    <option value="mobile">Mobile Phones</option>
+                                    <option value="laptop">Laptops</option>
+                                    <option value="accessories">Accessories</option>
+                                </select>
+                            </div>
+
+                            <div className="mobile-filter-group">
+                                <label className="filter-label">Sort By</label>
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => handleSortChange(e.target.value)}
+                                    className="filter-select"
+                                >
+                                    <option value="name">Name</option>
+                                    <option value="price-low">Price: Low to High</option>
+                                    <option value="price-high">Price: High to Low</option>
+                                    <option value="newest">Newest First</option>
+                                </select>
+                            </div>
+
+                            <div className="mobile-view-toggle">
+                                <label className="filter-label">View Mode</label>
+                                <div className="view-toggle">
+                                    <button
+                                        onClick={toggleViewMode}
+                                        className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                                        title="Grid View"
+                                    >
+                                        <i className="fas fa-th"></i>
+                                        <span>Grid</span>
+                                    </button>
+                                    <button
+                                        onClick={toggleViewMode}
+                                        className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                                        title="List View"
+                                    >
+                                        <i className="fas fa-list"></i>
+                                        <span>List</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Apply Button */}
+                        <div className="mobile-filter-actions">
+                            <button
+                                className="apply-filters-btn"
+                                onClick={toggleMobileFilters}
+                            >
+                                <i className="fas fa-check"></i>
+                                Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Products Section */}
             <section className="dashboard-products">
