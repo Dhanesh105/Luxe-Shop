@@ -112,8 +112,12 @@ const CartProducts = ({ cart, deleteCart, user }) => {
                                     <div key={item._id} className="cart-item">
                                         <div className="cart-item-image">
                                             <img
-                                                src={require(`./${item.imagename}`).default}
+                                                src={`/images/${item.imagename}`}
                                                 alt={item.title}
+                                                onError={(e) => {
+                                                    e.target.src = '/images/placeholder.svg';
+                                                    e.target.onerror = null;
+                                                }}
                                             />
                                         </div>
 

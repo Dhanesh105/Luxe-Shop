@@ -115,9 +115,13 @@ const AllProducts = ({ searchTerm = '', selectedCategory = 'all', sortBy = 'name
 
                         <div className="card-image">
                             <img
-                                src={require(`./${item.imagename}`).default}
+                                src={`/images/${item.imagename}`}
                                 alt={item.title}
                                 className="product-image"
+                                onError={(e) => {
+                                    e.target.src = '/images/placeholder.svg';
+                                    e.target.onerror = null;
+                                }}
                             />
                             <div className="image-overlay">
                                 <button

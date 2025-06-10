@@ -155,8 +155,12 @@ const OrderProducts = ({ order, deleteOrder, user }) => {
                                 <div className="order-product">
                                     <div className="product-image">
                                         <img
-                                            src={require(`./${item.imagename}`).default}
+                                            src={`/images/${item.imagename}`}
                                             alt={item.title}
+                                            onError={(e) => {
+                                                e.target.src = '/images/placeholder.svg';
+                                                e.target.onerror = null;
+                                            }}
                                         />
                                     </div>
 

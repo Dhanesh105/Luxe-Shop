@@ -88,11 +88,9 @@ CLIENT_URL=https://your-app-name.vercel.app
 ### 🌐 How It Works
 
 1. **Frontend**: React app builds to `client/build/`
-2. **Backend**: Express API runs as serverless functions
-3. **Routing**: 
-   - `/api/*` → Backend API
-   - `/*` → Frontend React app
-4. **Database**: MongoDB Atlas (cloud)
+2. **Static Assets**: Images served from `client/public/images/`
+3. **Routing**: All routes serve the React app (SPA support)
+4. **API Calls**: Frontend connects to separately deployed backend
 
 ### ✅ Testing Your Deployment
 
@@ -111,14 +109,19 @@ After deployment, test these URLs:
 - Verify all dependencies in package.json
 - Check build logs in Vercel dashboard
 
+#### Images Not Loading?
+- Ensure images are in `client/public/images/` directory
+- Check image file names match exactly (case-sensitive)
+- Verify images are committed to your repository
+
 #### API Not Working?
 - Verify environment variables are set
-- Check MongoDB Atlas connection string
-- Ensure IP whitelist includes `0.0.0.0/0`
+- Check your backend deployment is running
+- Ensure CORS is configured on backend
 
 #### CORS Errors?
-- Update `CLIENT_URL` environment variable
-- Ensure it matches your Vercel domain exactly
+- Update backend CORS settings to allow your Vercel domain
+- Check `REACT_APP_API_URL` environment variable
 
 #### Database Connection Issues?
 - Check MongoDB Atlas cluster is running

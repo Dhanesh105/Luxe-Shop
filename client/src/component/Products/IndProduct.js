@@ -146,8 +146,12 @@ const IndProduct = ({match,cart,user,addToCart,deleteCart,address}) => {
                             </div>
                             <img
                                 className="main-product-image"
-                                src={require(`./${imagename}`).default}
+                                src={`/images/${imagename}`}
                                 alt={title}
+                                onError={(e) => {
+                                    e.target.src = '/images/placeholder.svg';
+                                    e.target.onerror = null;
+                                }}
                             />
                             <div className="image-zoom-hint">
                                 <i className="fas fa-search-plus"></i>
@@ -164,8 +168,12 @@ const IndProduct = ({match,cart,user,addToCart,deleteCart,address}) => {
                                     onClick={() => setSelectedImage(index)}
                                 >
                                     <img
-                                        src={require(`./${imagename}`).default}
+                                        src={`/images/${imagename}`}
                                         alt={`${title} view ${index + 1}`}
+                                        onError={(e) => {
+                                            e.target.src = '/images/placeholder.svg';
+                                            e.target.onerror = null;
+                                        }}
                                     />
                                 </div>
                             ))}
