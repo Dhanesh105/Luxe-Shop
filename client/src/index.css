@@ -3122,10 +3122,70 @@ code {
     text-align: center;
   }
 
+  /* Auth Error Messages */
+  .auth-error-message {
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    color: #dc3545;
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius-small);
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .auth-error-message i {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+
+  .field-error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    opacity: 0.9;
+  }
+
+  .field-error-message i {
+    font-size: 0.75rem;
+  }
+
+  /* Error state for form controls */
+  .form-control-modern.error,
+  .select-modern.error {
+    border-color: rgba(220, 53, 69, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.1) !important;
+  }
+
+  .form-control-modern.error:focus,
+  .select-modern.error:focus {
+    border-color: rgba(220, 53, 69, 0.7) !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15) !important;
+  }
+
   /* Special handling for register page with more content */
   .auth-container {
     align-items: flex-start; /* Allow scrolling for register page */
     padding-top: calc(var(--spacing-md) + 70px + 1rem); /* Extra space for register */
+  }
+
+  /* Mobile Error Messages */
+  .auth-error-message {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    margin: 0.75rem 0;
+  }
+
+  .field-error-message {
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
   }
 
   /* Dashboard Mobile Fixes */
@@ -3432,6 +3492,18 @@ code {
     max-height: calc(100vh - 120px) !important; /* Prevent overflow on small mobile */
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important; /* Smooth scrolling on iOS */
+  }
+
+  /* Small Mobile Error Messages */
+  .auth-error-message {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.8rem !important;
+    margin: 0.5rem 0 !important;
+  }
+
+  .field-error-message {
+    font-size: 0.7rem !important;
+    margin-top: 0.15rem !important;
   }
 
   .auth-title {

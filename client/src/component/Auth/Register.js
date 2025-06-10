@@ -19,6 +19,8 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
     });
     const [isLoading, setIsLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
+    const [errors, setErrors] = useState({});
+    const [registrationAttempted, setRegistrationAttempted] = useState(false);
 
     const { name, email, password, password2, phone, address, state, city, pincode } = formData;
 
@@ -34,8 +36,97 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
         <option key={index} value={state}>{state}</option>
     ));
 
+    // Validation functions
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const validatePhone = (phone) => {
+        const phoneRegex = /^[0-9]{10}$/;
+        return phoneRegex.test(phone.replace(/\D/g, ''));
+    };
+
+    const validatePincode = (pincode) => {
+        const pincodeRegex = /^[0-9]{6}$/;
+        return pincodeRegex.test(pincode);
+    };
+
+    const validateStep1Fields = () => {
+        const newErrors = {};
+
+        if (!name.trim()) {
+            newErrors.name = 'Full name is required';
+        } else if (name.trim().length < 2) {
+            newErrors.name = 'Name must be at least 2 characters';
+        }
+
+        if (!phone.trim()) {
+            newErrors.phone = 'Phone number is required';
+        } else if (!validatePhone(phone)) {
+            newErrors.phone = 'Please enter a valid 10-digit phone number';
+        }
+
+        if (!email.trim()) {
+            newErrors.email = 'Email address is required';
+        } else if (!validateEmail(email)) {
+            newErrors.email = 'Please enter a valid email address';
+        }
+
+        if (!password.trim()) {
+            newErrors.password = 'Password is required';
+        } else if (password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
+        }
+
+        if (!password2.trim()) {
+            newErrors.password2 = 'Please confirm your password';
+        } else if (password !== password2) {
+            newErrors.password2 = 'Passwords do not match';
+        }
+
+        return newErrors;
+    };
+
+    const validateStep2Fields = () => {
+        const newErrors = {};
+
+        if (!address.trim()) {
+            newErrors.address = 'Address is required';
+        } else if (address.trim().length < 10) {
+            newErrors.address = 'Please enter a complete address';
+        }
+
+        if (!state.trim()) {
+            newErrors.state = 'State is required';
+        }
+
+        if (!city.trim()) {
+            newErrors.city = 'City is required';
+        }
+
+        if (!pincode.trim()) {
+            newErrors.pincode = 'Pincode is required';
+        } else if (!validatePincode(pincode)) {
+            newErrors.pincode = 'Please enter a valid 6-digit pincode';
+        }
+
+        return newErrors;
+    };
+
     const onChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+
+        // Clear specific field error when user starts typing
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: '' });
+        }
+
+        // Clear registration attempt flag when user modifies form
+        if (registrationAttempted) {
+            setRegistrationAttempted(false);
+        }
     };
 
     const validateStep = (step) => {
@@ -50,44 +141,13 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
     };
 
     const nextStep = () => {
-        // Check password match first for step 1
-        if (currentStep === 1 && password !== password2) {
-            setAlert('Passwords do not match', 'danger');
-            return;
-        }
+        const stepErrors = validateStep1Fields();
 
-        // Validate current step
-        if (validateStep(currentStep)) {
+        if (Object.keys(stepErrors).length === 0) {
             setCurrentStep(currentStep + 1);
+            setErrors({}); // Clear errors when moving to next step
         } else {
-            // Provide specific error messages based on current step
-            if (currentStep === 1) {
-                if (!name) {
-                    setAlert('Please enter your full name', 'danger');
-                } else if (!phone) {
-                    setAlert('Please enter your phone number', 'danger');
-                } else if (!email) {
-                    setAlert('Please enter your email address', 'danger');
-                } else if (!password) {
-                    setAlert('Please create a password', 'danger');
-                } else if (!password2) {
-                    setAlert('Please confirm your password', 'danger');
-                } else {
-                    setAlert('Please fill in all required fields', 'danger');
-                }
-            } else if (currentStep === 2) {
-                if (!address) {
-                    setAlert('Please enter your address', 'danger');
-                } else if (!state) {
-                    setAlert('Please select your state', 'danger');
-                } else if (!city) {
-                    setAlert('Please enter your city', 'danger');
-                } else if (!pincode) {
-                    setAlert('Please enter your pincode', 'danger');
-                } else {
-                    setAlert('Please fill in all required fields', 'danger');
-                }
-            }
+            setErrors(stepErrors);
         }
     };
 
@@ -97,20 +157,26 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        if (password !== password2) {
-            setAlert('Passwords do not match', 'danger');
-            return;
-        }
-        if (!validateStep(2)) {
-            setAlert('Please fill in all required fields', 'danger');
-            return;
-        }
+        setRegistrationAttempted(true);
 
-        setIsLoading(true);
-        try {
-            await register({ name, email, password, phone, address, state, city, pincode });
-        } finally {
-            setIsLoading(false);
+        const stepErrors = validateStep2Fields();
+
+        if (Object.keys(stepErrors).length === 0) {
+            setIsLoading(true);
+            setErrors({}); // Clear any previous errors
+
+            try {
+                await register({ name, email, password, phone, address, state, city, pincode });
+            } catch (error) {
+                // Handle registration failure
+                setErrors({
+                    general: 'Registration failed. Please check your information and try again.'
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            setErrors(stepErrors);
         }
     };
 
@@ -128,11 +194,17 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                     name='address'
                     value={address}
                     onChange={onChange}
-                    className="form-control-modern"
+                    className={`form-control-modern ${errors.address ? 'error' : ''}`}
                     id="inputAddress"
                     placeholder="Enter your complete address"
                     required
                 />
+                {errors.address && (
+                    <div className="field-error-message">
+                        <i className="fas fa-exclamation-circle"></i>
+                        {errors.address}
+                    </div>
+                )}
             </div>
 
             <div className="form-row-modern">
@@ -142,7 +214,7 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                     </label>
                     <select
                         id="inputState"
-                        className="select-modern"
+                        className={`select-modern ${errors.state ? 'error' : ''}`}
                         name='state'
                         value={state}
                         onChange={onChange}
@@ -151,6 +223,12 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                         <option value="">Choose State...</option>
                         {states}
                     </select>
+                    {errors.state && (
+                        <div className="field-error-message">
+                            <i className="fas fa-exclamation-circle"></i>
+                            {errors.state}
+                        </div>
+                    )}
                 </div>
                 <div className="form-group-modern">
                     <label htmlFor="inputCity">
@@ -158,7 +236,7 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                     </label>
                     <input
                         type="text"
-                        className="form-control-modern"
+                        className={`form-control-modern ${errors.city ? 'error' : ''}`}
                         id="inputCity"
                         name='city'
                         value={city}
@@ -166,6 +244,12 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                         placeholder="Enter your city"
                         required
                     />
+                    {errors.city && (
+                        <div className="field-error-message">
+                            <i className="fas fa-exclamation-circle"></i>
+                            {errors.city}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -175,7 +259,7 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                 </label>
                 <input
                     type="text"
-                    className="form-control-modern"
+                    className={`form-control-modern ${errors.pincode ? 'error' : ''}`}
                     id="inputZip"
                     name='pincode'
                     value={pincode}
@@ -183,6 +267,12 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                     placeholder="Enter your pincode"
                     required
                 />
+                {errors.pincode && (
+                    <div className="field-error-message">
+                        <i className="fas fa-exclamation-circle"></i>
+                        {errors.pincode}
+                    </div>
+                )}
             </div>
 
             <div className="form-row-modern button-row">
@@ -217,11 +307,17 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                         name='name'
                         value={name}
                         onChange={onChange}
-                        className="form-control-modern"
+                        className={`form-control-modern ${errors.name ? 'error' : ''}`}
                         id="inputname"
                         placeholder="Enter your full name"
                         required
                     />
+                    {errors.name && (
+                        <div className="field-error-message">
+                            <i className="fas fa-exclamation-circle"></i>
+                            {errors.name}
+                        </div>
+                    )}
                 </div>
                 <div className="form-group-modern">
                     <label htmlFor="inputphone">
@@ -232,11 +328,17 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                         name='phone'
                         value={phone}
                         onChange={onChange}
-                        className="form-control-modern"
+                        className={`form-control-modern ${errors.phone ? 'error' : ''}`}
                         id="inputphone"
                         placeholder="Enter your phone number"
                         required
                     />
+                    {errors.phone && (
+                        <div className="field-error-message">
+                            <i className="fas fa-exclamation-circle"></i>
+                            {errors.phone}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -249,11 +351,17 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                     name='email'
                     value={email}
                     onChange={onChange}
-                    className="form-control-modern"
+                    className={`form-control-modern ${errors.email ? 'error' : ''}`}
                     id="inputEmail"
                     placeholder="Enter your email address"
                     required
                 />
+                {errors.email && (
+                    <div className="field-error-message">
+                        <i className="fas fa-exclamation-circle"></i>
+                        {errors.email}
+                    </div>
+                )}
             </div>
 
             <div className="form-row-modern">
@@ -266,11 +374,17 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                         name='password'
                         value={password}
                         onChange={onChange}
-                        className="form-control-modern"
+                        className={`form-control-modern ${errors.password ? 'error' : ''}`}
                         id="inputPassword"
                         placeholder="Create a password"
                         required
                     />
+                    {errors.password && (
+                        <div className="field-error-message">
+                            <i className="fas fa-exclamation-circle"></i>
+                            {errors.password}
+                        </div>
+                    )}
                 </div>
                 <div className="form-group-modern">
                     <label htmlFor="inputPassword2">
@@ -281,11 +395,17 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                         name='password2'
                         value={password2}
                         onChange={onChange}
-                        className="form-control-modern"
+                        className={`form-control-modern ${errors.password2 ? 'error' : ''}`}
                         id="inputPassword2"
                         placeholder="Confirm your password"
                         required
                     />
+                    {errors.password2 && (
+                        <div className="field-error-message">
+                            <i className="fas fa-exclamation-circle"></i>
+                            {errors.password2}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -308,6 +428,12 @@ const Register = ({ setAlert, register, isAuthenticated, loading }) => {
                         <p className="auth-subtitle">
                             Step {currentStep} of 2 - {currentStep === 1 ? 'Personal Information' : 'Address Details'}
                         </p>
+                        {errors.general && (
+                            <div className="auth-error-message">
+                                <i className="fas fa-exclamation-triangle"></i>
+                                {errors.general}
+                            </div>
+                        )}
 
                         <div className="progress-indicator">
                             <div className={`progress-step ${currentStep >= 1 ? 'active' : ''}`}>
