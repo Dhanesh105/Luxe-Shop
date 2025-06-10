@@ -4,6 +4,48 @@ import {connect} from 'react-redux';
 import {addToOrder} from '../../action/order';
 
 const PlaceOrder = ({ match, user, addToOrder, auth, loading }) => {
+    // Initialize hooks first (before any early returns)
+    const [flag, setFlag] = useState(0);
+    const [toggle, setToggle] = useState(false);
+    const [alter, setAlter] = useState('');
+
+    // Safely parse URL parameters
+    let data = [];
+    let paramstitle = '';
+    let paramsimagename = '';
+    let paramsprice = '';
+    let paramsaddress = '';
+
+    try {
+        if (match && match.params && match.params.data) {
+            data = match.params.data.split('+');
+            paramstitle = data[0] ? decodeURIComponent(data[0]) : '';
+            paramsimagename = data[1] ? decodeURIComponent(data[1]) : '';
+            paramsprice = data[2] ? decodeURIComponent(data[2]) : '';
+            paramsaddress = data[3] ? decodeURIComponent(data[3]) : '';
+        }
+    } catch (error) {
+        console.error('Error parsing URL parameters:', error);
+    }
+
+    // Set default address from user if available
+    if (!paramsaddress && auth && auth.user && auth.user.address) {
+        paramsaddress = auth.user.address;
+    }
+
+    const [formData, setFormData] = useState({
+        title: paramstitle,
+        imagename: paramsimagename,
+        price: paramsprice,
+        address: paramsaddress
+    });
+
+    let { title, imagename, price, address } = formData;
+
+    const onChange = e => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
     // Show loading state
     if (loading) {
         return (
@@ -19,45 +61,18 @@ const PlaceOrder = ({ match, user, addToOrder, auth, loading }) => {
     }
 
     // Check if user is authenticated
-    if (!auth.isAuthenticated || !auth.user) {
+    if (!auth || !auth.isAuthenticated || !auth.user) {
         return <Redirect to='/login' />;
     }
 
-    // Safely parse URL parameters
-    let data;
-    try {
-        data = match.params.data ? match.params.data.split('+') : [];
-    } catch (error) {
-        console.error('Error parsing URL parameters:', error);
-        return <Redirect to='/dashboard' />;
-    }
-
     // Validate that we have the required data
-    if (!data || data.length < 3) {
+    if (!data || data.length < 3 || !title || !imagename || !price) {
         console.error('Invalid product data in URL');
         return <Redirect to='/dashboard' />;
     }
-
-    let paramstitle = data[0] ? decodeURIComponent(data[0]) : '';
-    let paramsimagename = data[1] ? decodeURIComponent(data[1]) : '';
-    let paramsprice = data[2] ? decodeURIComponent(data[2]) : '';
-    let paramsaddress = data[3] ? decodeURIComponent(data[3]) : (auth.user.address || '');
-    const [flag,setFlag] = useState(0);
-    const [formData,setFormData] = useState({
-        title:paramstitle,
-        imagename:paramsimagename,
-        price : paramsprice,
-        address : paramsaddress
-    });
-    let {title,imagename,price,address} = formData;
-    const onChange = e =>{
-        setFormData({...formData,[e.target.name]:e.target.value});
-    }
-    const [toggle,setToggle] = useState(false);
-    const [alter,setAlter] = useState('');
-    const alterChange = e =>{
+    const alterChange = e => {
         setAlter(e.target.value);
-    }
+    };
   
     const onSubmit = async (e) => {
         e.preventDefault();
