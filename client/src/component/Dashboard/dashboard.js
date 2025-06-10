@@ -76,6 +76,10 @@ const Dashboard = ({ user }) => {
         setIsMobileFiltersOpen(!isMobileFiltersOpen);
     };
 
+    const closeMobileFilters = () => {
+        setIsMobileFiltersOpen(false);
+    };
+
     // Prevent body scroll when mobile filter is open
     useEffect(() => {
         if (isMobileFiltersOpen) {
@@ -87,6 +91,23 @@ const Dashboard = ({ user }) => {
         // Cleanup on unmount
         return () => {
             document.body.classList.remove('mobile-filter-open');
+        };
+    }, [isMobileFiltersOpen]);
+
+    // Handle escape key to close mobile filters
+    useEffect(() => {
+        const handleEscapeKey = (event) => {
+            if (event.key === 'Escape' && isMobileFiltersOpen) {
+                closeMobileFilters();
+            }
+        };
+
+        if (isMobileFiltersOpen) {
+            document.addEventListener('keydown', handleEscapeKey);
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscapeKey);
         };
     }, [isMobileFiltersOpen]);
 
@@ -200,7 +221,7 @@ const Dashboard = ({ user }) => {
             {/* Mobile Filter Overlay */}
             <div
                 className={`mobile-filter-overlay ${isMobileFiltersOpen ? 'active' : ''}`}
-                onClick={toggleMobileFilters}
+                onClick={closeMobileFilters}
             >
                 <div
                     className="mobile-filter-content"
@@ -210,7 +231,7 @@ const Dashboard = ({ user }) => {
                         <h3>Filters & Search</h3>
                         <button
                             className="close-btn"
-                            onClick={toggleMobileFilters}
+                            onClick={closeMobileFilters}
                             aria-label="Close Filters"
                         >
                             <i className="fas fa-times"></i>
@@ -289,7 +310,7 @@ const Dashboard = ({ user }) => {
                         <div className="mobile-filter-actions">
                             <button
                                 className="apply-filters-btn"
-                                onClick={toggleMobileFilters}
+                                onClick={closeMobileFilters}
                             >
                                 <i className="fas fa-check"></i>
                                 Apply Filters

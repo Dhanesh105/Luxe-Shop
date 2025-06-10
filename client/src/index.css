@@ -2993,6 +2993,74 @@ code {
     padding-top: 70px; /* Reduced for mobile navbar */
   }
 
+  /* Auth Pages Mobile Improvements */
+  .auth-container {
+    padding: var(--spacing-md);
+    min-height: 100vh;
+  }
+
+  .auth-card {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+    max-width: 100%;
+    border-radius: 20px;
+  }
+
+  .auth-title {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .auth-subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .progress-indicator {
+    margin-bottom: 2.5rem;
+  }
+
+  .progress-step {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+    margin: 0 0.75rem;
+  }
+
+  .form-row-modern {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-group-modern {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-control-modern,
+  .select-modern {
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    border-radius: 12px;
+  }
+
+  .btn-modern {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .button-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .auth-footer {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
   /* Dashboard Mobile Fixes */
   .dashboard-modern {
     padding: 0;
@@ -3275,6 +3343,83 @@ code {
     padding: 0 var(--spacing-sm);
   }
 
+  /* Auth Pages Mobile Improvements */
+  .auth-container {
+    padding: var(--spacing-sm) !important;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-card {
+    padding: 1.5rem !important;
+    margin: 0.5rem !important;
+    width: 100% !important;
+    max-width: none !important;
+    border-radius: 15px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .auth-title {
+    font-size: 1.8rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .auth-subtitle {
+    font-size: 0.9rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .progress-indicator {
+    margin-bottom: 2rem !important;
+  }
+
+  .progress-step {
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 0.9rem !important;
+    margin: 0 0.5rem !important;
+  }
+
+  .form-row-modern {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .form-group-modern {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .form-control-modern,
+  .select-modern {
+    padding: 1rem !important;
+    font-size: 1rem !important;
+    border-radius: 12px !important;
+  }
+
+  .btn-modern {
+    padding: 1rem 1.5rem !important;
+    font-size: 1rem !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .button-row {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .auth-footer {
+    margin-top: 2rem !important;
+    text-align: center !important;
+  }
+
+  .auth-footer p {
+    font-size: 0.9rem !important;
+  }
+
   /* Dashboard Mobile Fixes */
   .dashboard-hero {
     padding: var(--spacing-md) 0;
@@ -3358,19 +3503,23 @@ code {
   font-size: 1.2rem;
   box-shadow: var(--shadow-elegant);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .burger-btn:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .burger-btn:active {
   transform: scale(0.95);
+  transition: transform 0.1s ease;
 }
 
 /* Mobile Filter Overlay */
@@ -3385,7 +3534,9 @@ code {
   z-index: 1001;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .mobile-filter-overlay.active {
@@ -3403,7 +3554,9 @@ code {
   max-height: 80vh;
   overflow-y: auto;
   transform: translateY(100%);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobile-filter-overlay.active .mobile-filter-content {
