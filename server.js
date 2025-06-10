@@ -14,21 +14,29 @@ process.on('unhandledRejection', (err) => {
     console.error('Unhandled Promise Rejection:', err);
 });
 
-// Connect to database with error handling
+// Database connection status
 let dbConnected = false;
-const initializeDB = async () => {
-    if (!dbConnected) {
-        try {
-            await connectDB();
-            dbConnected = true;
-        } catch (error) {
-            console.error('Failed to connect to database:', error);
-        }
+
+// Initialize database connection for each request in serverless
+const ensureDBConnection = async () => {
+    try {
+        await connectDB();
+        dbConnected = true;
+        return true;
+    } catch (error) {
+        console.error('Failed to connect to database:', error);
+        dbConnected = false;
+        return false;
     }
 };
 
-// Initialize database connection
-initializeDB();
+// Middleware to ensure database connection
+app.use(async (_req, _res, next) => {
+    if (!dbConnected) {
+        await ensureDBConnection();
+    }
+    next();
+});
 
 // Middleware
 const allowedOrigins = [
