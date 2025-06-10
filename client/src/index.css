@@ -2929,6 +2929,11 @@ code {
     gap: var(--spacing-lg);
   }
 
+  /* Cart Mobile Fixes */
+  .cart-modern {
+    padding-top: 90px !important; /* Override to ensure proper spacing */
+  }
+
   .cart-summary-section {
     order: -1;
   }
@@ -3103,7 +3108,15 @@ code {
 @media (max-width: 768px) {
   /* Fix body padding for mobile */
   body {
-    padding-top: 0; /* Remove body padding for mobile - hero handles its own spacing */
+    padding-top: 0; /* Remove body padding for mobile - each page handles its own spacing */
+  }
+
+  /* Fix navbar collision for all pages on mobile */
+  .dashboard-modern,
+  .cart-modern,
+  .profile-modern,
+  .product-detail-modern {
+    padding-top: 90px; /* Add padding to clear navbar + buffer space */
   }
 
   /* Auth Pages Mobile Improvements */
@@ -3282,6 +3295,8 @@ code {
   .dashboard-hero {
     padding: var(--spacing-lg) 0;
     text-align: center;
+    margin-top: -90px; /* Offset the dashboard padding */
+    padding-top: calc(var(--spacing-lg) + 90px); /* Add back the space */
   }
 
   .dashboard-title {
@@ -3633,7 +3648,15 @@ code {
 @media (max-width: 480px) {
   /* Body and Layout */
   body {
-    padding-top: 0; /* Remove body padding for extra small mobile - hero handles its own spacing */
+    padding-top: 0; /* Remove body padding for extra small mobile - each page handles its own spacing */
+  }
+
+  /* Fix navbar collision for all pages on extra small mobile */
+  .dashboard-modern,
+  .cart-modern,
+  .profile-modern,
+  .product-detail-modern {
+    padding-top: 80px; /* Add padding to clear navbar + buffer space */
   }
 
   .container {
@@ -3757,6 +3780,8 @@ code {
   /* Dashboard Mobile Fixes */
   .dashboard-hero {
     padding: var(--spacing-md) 0;
+    margin-top: -80px; /* Offset the dashboard padding */
+    padding-top: calc(var(--spacing-md) + 80px); /* Add back the space */
   }
 
   .dashboard-title {
@@ -3789,6 +3814,17 @@ code {
   /* Dashboard Products - Remove excessive padding */
   .dashboard-modern .dashboard-products {
     padding-top: var(--spacing-sm) !important;
+  }
+
+  /* Extra Small Mobile Fixes for other pages */
+  .cart-modern,
+  .profile-modern {
+    padding-top: 80px !important; /* Override for extra small mobile */
+  }
+
+  .profile-hero {
+    margin-top: -80px !important; /* Offset for extra small mobile */
+    padding-top: calc(var(--spacing-xl) + 80px) !important; /* Add back the space */
   }
 
   .search-input {
@@ -6475,9 +6511,19 @@ body.mobile-filter-open {
 }
 
 @media (max-width: 768px) {
+  /* Profile Mobile Fixes */
+  .profile-modern {
+    padding-top: 90px !important; /* Override to ensure proper spacing */
+  }
+
   .profile-layout {
     grid-template-columns: 1fr;
     gap: var(--spacing-md);
+  }
+
+  .profile-hero {
+    margin-top: -90px; /* Offset the profile padding */
+    padding-top: calc(var(--spacing-xl) + 90px); /* Add back the space */
   }
 
   .profile-nav {
