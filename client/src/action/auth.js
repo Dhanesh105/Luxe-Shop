@@ -3,6 +3,7 @@ import axios from 'axios';
 import setAlert from './alert';
 import {getCart} from './cart';
 import {getOrder} from './order';
+import { API_ENDPOINTS } from '../config/api';
 
 // user loading
 export const loadUser = () =>async dispatch =>{
@@ -10,11 +11,11 @@ export const loadUser = () =>async dispatch =>{
         setAuthToken(localStorage.token);
     }
     try{
-        const res = await axios.get('/api/user/profile');
+        const res = await axios.get(API_ENDPOINTS.USER_PROFILE);
         dispatch({
             type:"USER_LOADED",
             payload:res.data
-        });      
+        });
     }
     catch(err){
         dispatch({
@@ -33,7 +34,7 @@ export const register = formData => async dispatch =>{
     }
     const body = JSON.stringify({name,email,password,address,pincode,state,city,phone});
     try{
-        const res = await axios.post('/api/user',body,config);
+        const res = await axios.post(API_ENDPOINTS.REGISTER,body,config);
         dispatch({
             type : "REGISTER_SUCCESS",
             payload:res.data
@@ -66,7 +67,7 @@ export const login = formData => async dispatch =>{
     }
     const body = JSON.stringify({email,password});
     try{
-        const res = await axios.post('/api/auth',body,config);
+        const res = await axios.post(API_ENDPOINTS.LOGIN,body,config);
         dispatch({
             type : "LOGIN_SUCCESS",
             payload:res.data

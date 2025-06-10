@@ -48,35 +48,108 @@ const PlaceOrder = ({ match,user,addToOrder }) => {
    
     return (
         <Fragment>
-            <div className="card text-center">
-            <div className="card-header">
-                Place Your Order
-            </div>
-            <div className="card-body mr-auto ml-auto">
-
-            <form onSubmit={onSubmit}>
-            <div className="form-group" >
-                {!toggle && <Fragment>
-                    <div className="form-check">
-                        <input type="checkbox"  name='address' value={address} onChange={onChange}  className="form-check-input" id="exampleCheck1" />
-                        <label className="form-check-label" for="exampleCheck1">{address} (Registered address as delivery address)</label>
+            <div className="place-order-container">
+                <div className="place-order-card">
+                    <div className="place-order-header">
+                        <div className="header-icon">
+                            <i className="fas fa-shipping-fast"></i>
+                        </div>
+                        <h2 className="header-title">Place Your Order</h2>
+                        <p className="header-subtitle">Review and confirm your delivery details</p>
                     </div>
-                    </Fragment>}
-            
-                <label for="exampleInputText1"><strong>Note : </strong>If you need to change delivery address, Please <Link onClick={()=> setToggle(!toggle)}>click here</Link></label>
-               { toggle && 
-               <Fragment>
-               <input type="text"  name='alter' value={alter} onChange={alterChange}  className="form-control" id="exampleInputText1" aria-describedby="textHelp" placeholder="Enter New Delivery Address" />
-                <small id="textHelp" className="form-text text-muted">Kindly Provide Valid Delivery Address.</small>
-                </Fragment>}
-            </div>
-            <button type="submit" className="btn btn-primary">Confirm Order</button>
-            </form>
 
+                    <div className="order-summary">
+                        <div className="product-preview">
+                            <div className="product-image">
+                                <img src={`/images/${imagename}`} alt={title} />
+                            </div>
+                            <div className="product-details">
+                                <h3 className="product-title">{title}</h3>
+                                <div className="product-price">₹{price}</div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <form onSubmit={onSubmit} className="place-order-form">
+                        <div className="delivery-section">
+                            <h3 className="section-title">
+                                <i className="fas fa-map-marker-alt"></i>
+                                Delivery Address
+                            </h3>
+
+                            {!toggle && (
+                                <div className="address-option">
+                                    <div className="custom-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            name='address'
+                                            value={address}
+                                            onChange={onChange}
+                                            className="checkbox-input"
+                                            id="defaultAddress"
+                                            defaultChecked
+                                        />
+                                        <label className="checkbox-label" htmlFor="defaultAddress">
+                                            <span className="checkbox-custom"></span>
+                                            <div className="address-content">
+                                                <div className="address-text">{address}</div>
+                                                <small className="address-note">Registered address as delivery address</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="address-change-note">
+                                <i className="fas fa-info-circle"></i>
+                                <span>Need to change delivery address? </span>
+                                <button
+                                    type="button"
+                                    className="change-address-btn"
+                                    onClick={() => setToggle(!toggle)}
+                                >
+                                    {toggle ? 'Use registered address' : 'Change address'}
+                                </button>
+                            </div>
+
+                            {toggle && (
+                                <div className="new-address-section">
+                                    <div className="input-group">
+                                        <label htmlFor="newAddress" className="input-label">
+                                            <i className="fas fa-home"></i>
+                                            New Delivery Address
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name='alter'
+                                            value={alter}
+                                            onChange={alterChange}
+                                            className="address-input"
+                                            id="newAddress"
+                                            placeholder="Enter complete delivery address with pincode"
+                                            required
+                                        />
+                                        <small className="input-help">
+                                            Please provide a complete and valid delivery address
+                                        </small>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="order-actions">
+                            <Link to="/cart" className="btn-secondary">
+                                <i className="fas fa-arrow-left"></i>
+                                Back to Cart
+                            </Link>
+                            <button type="submit" className="btn-primary">
+                                <i className="fas fa-check-circle"></i>
+                                Confirm Order
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            </div>
-            
         </Fragment>
     )
 }

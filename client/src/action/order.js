@@ -1,6 +1,7 @@
 import setAuthToken from '../utils/setAuthToken';
 import axios from 'axios';
 import setAlert from './alert';
+import { API_ENDPOINTS } from '../config/api';
 
 
 //add to order
@@ -16,7 +17,7 @@ export const addToOrder = formData => async dispatch =>{
     }
     const body = JSON.stringify({user,title,imagename,price,address});
     try{
-        const res = await axios.post('/api/order',body,config);
+        const res = await axios.post(API_ENDPOINTS.ORDER,body,config);
         dispatch({
             type : "ORDER_ADDING_SUCCESS",
             payload:res.data
@@ -42,7 +43,7 @@ export const getOrder = () => async dispatch =>{
         setAuthToken(localStorage.token);
     }
     try{
-        const res = await axios.get('/api/order');
+        const res = await axios.get(API_ENDPOINTS.ORDER);
         dispatch({
             type : "ORDER_GETTING_SUCCESS",
             payload:res.data
@@ -70,7 +71,7 @@ export const deleteOrder = (id) => async dispatch =>{
     }
     console.log('deleteOrder triggered')
     try{
-        await axios.delete(`/api/order/${id}`);
+        await axios.delete(API_ENDPOINTS.ORDER_ITEM(id));
         dispatch({
             type:"ORDER_REMOVE_SUCCESS",
             payload:id

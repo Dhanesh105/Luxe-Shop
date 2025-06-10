@@ -1,6 +1,7 @@
 import setAuthToken from '../utils/setAuthToken';
 import axios from 'axios';
 import setAlert from './alert';
+import { API_ENDPOINTS } from '../config/api';
 
 
 //add to cart
@@ -13,7 +14,7 @@ export const addToCart = formData => async dispatch =>{
     }
     const body = JSON.stringify({user,title,imagename,price});
     try{
-        const res = await axios.post('/api/cart',body,config);
+        const res = await axios.post(API_ENDPOINTS.CART,body,config);
         dispatch({
             type : "CART_ADDING_SUCCESS",
             payload:res.data
@@ -39,7 +40,7 @@ export const getCart = () => async dispatch =>{
         setAuthToken(localStorage.token);
     }
     try{
-        const res = await axios.get('/api/cart');
+        const res = await axios.get(API_ENDPOINTS.CART);
         dispatch({
             type : "CART_GETTING_SUCCESS",
             payload:res.data
@@ -66,7 +67,7 @@ export const deleteCart = id => async dispatch =>{
         setAuthToken(localStorage.token);
     }
     try{
-        await axios.delete(`/api/cart/${id}`);
+        await axios.delete(API_ENDPOINTS.CART_ITEM(id));
         dispatch({
             type:"CART_REMOVE_SUCCESS",
             payload:id
