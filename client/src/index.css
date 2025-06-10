@@ -76,6 +76,7 @@ code {
   overflow: hidden;
   margin-top: -80px; /* Offset the body padding for full-screen auth */
   padding-top: calc(var(--spacing-lg) + 80px); /* Add back the navbar height */
+  padding-bottom: var(--spacing-lg); /* Add bottom padding to prevent footer gap */
 }
 
 .auth-container::before {
@@ -465,10 +466,64 @@ code {
     margin-top: 0.5rem;
     padding: 1rem;
     box-shadow: var(--shadow-elegant);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .navbar-collapse.show {
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .navbar-nav {
     gap: 0.5rem;
+    width: 100%;
+  }
+
+  .navbar-nav .nav-btn-modern {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Ensure navbar doesn't interfere with page content */
+  .navbar-modern {
+    z-index: 1050; /* Higher than other elements */
+  }
+
+  .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1051;
+    margin: 0 1rem; /* Add side margins */
+  }
+
+  /* Mobile navbar overlay */
+  .navbar-collapse.show::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: -1;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
   }
 
   .nav-btn-modern {
@@ -2996,7 +3051,10 @@ code {
   /* Auth Pages Mobile Improvements */
   .auth-container {
     padding: var(--spacing-md);
+    padding-top: calc(var(--spacing-md) + 70px); /* Add navbar height for mobile */
+    padding-bottom: var(--spacing-lg); /* Ensure no footer gap */
     min-height: 100vh;
+    margin-top: -70px; /* Offset mobile navbar */
   }
 
   .auth-card {
@@ -3004,6 +3062,9 @@ code {
     margin: 1rem;
     max-width: 100%;
     border-radius: 20px;
+    max-height: calc(100vh - 140px); /* Prevent overflow on mobile */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
 
   .auth-title {
@@ -3059,6 +3120,12 @@ code {
   .auth-footer {
     margin-top: 2rem;
     text-align: center;
+  }
+
+  /* Special handling for register page with more content */
+  .auth-container {
+    align-items: flex-start; /* Allow scrolling for register page */
+    padding-top: calc(var(--spacing-md) + 70px + 1rem); /* Extra space for register */
   }
 
   /* Dashboard Mobile Fixes */
@@ -3346,7 +3413,10 @@ code {
   /* Auth Pages Mobile Improvements */
   .auth-container {
     padding: var(--spacing-sm) !important;
+    padding-top: calc(var(--spacing-sm) + 60px) !important; /* Add navbar height for small mobile */
+    padding-bottom: var(--spacing-lg) !important; /* Ensure no footer gap */
     min-height: 100vh;
+    margin-top: -60px !important; /* Offset small mobile navbar */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3359,6 +3429,9 @@ code {
     max-width: none !important;
     border-radius: 15px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    max-height: calc(100vh - 120px) !important; /* Prevent overflow on small mobile */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important; /* Smooth scrolling on iOS */
   }
 
   .auth-title {

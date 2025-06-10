@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -6,8 +6,56 @@ import { logout } from '../../action/auth';
 
 const Navbar = ({ auth: { isAuthenticated }, cart, logout }) => {
     const location = useLocation();
+    const [isNavOpen, setIsNavOpen] = useState(false);
+    const navRef = useRef(null);
 
     const isActive = (path) => location.pathname === path;
+
+    // Toggle navbar
+    const toggleNav = () => {
+        setIsNavOpen(!isNavOpen);
+    };
+
+    // Close navbar
+    const closeNav = () => {
+        setIsNavOpen(false);
+    };
+
+    // Handle click outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (navRef.current && !navRef.current.contains(event.target) && isNavOpen) {
+                closeNav();
+            }
+        };
+
+        if (isNavOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('touchstart', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
+        };
+    }, [isNavOpen]);
+
+    // Handle escape key
+    useEffect(() => {
+        const handleEscapeKey = (event) => {
+            if (event.key === 'Escape' && isNavOpen) {
+                closeNav();
+            }
+        };
+
+        if (isNavOpen) {
+            document.addEventListener('keydown', handleEscapeKey);
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscapeKey);
+        };
+    }, [isNavOpen]);
     const authLinks = (
         <Fragment>
             <Link to='/dashboard'>
@@ -55,7 +103,7 @@ const Navbar = ({ auth: { isAuthenticated }, cart, logout }) => {
     )
     return (
         <Fragment>
-            <nav className="navbar navbar-expand-lg navbar-modern">
+            <nav className="navbar navbar-expand-lg navbar-modern" ref={navRef}>
                 <div className="container">
                     <Link className="navbar-brand navbar-brand-modern" to='/'>
                         <i className="fas fa-gem"></i> LuxeShop
@@ -64,17 +112,16 @@ const Navbar = ({ auth: { isAuthenticated }, cart, logout }) => {
                     <button
                         className="navbar-toggler navbar-toggler-modern"
                         type="button"
-                        data-toggle="collapse"
-                        data-target="#navbarNav"
+                        onClick={toggleNav}
                         aria-controls="navbarNav"
-                        aria-expanded="false"
+                        aria-expanded={isNavOpen}
                         aria-label="Toggle navigation"
                     >
                         <span className="navbar-toggler-icon"></span>
                     </button>
 
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <div className="navbar-nav ml-auto">
+                    <div className={`collapse navbar-collapse ${isNavOpen ? 'show' : ''}`} id="navbarNav">
+                        <div className="navbar-nav ml-auto" onClick={closeNav}>
                             {isAuthenticated ? authLinks : guestLinks}
                         </div>
                     </div>
